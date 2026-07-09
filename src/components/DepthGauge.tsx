@@ -61,13 +61,19 @@ export default function DepthGauge() {
               <div className="font-bold">{stage.label}</div>
               {isActive && <div className="opacity-70">{depthMeters}m</div>}
             </div>
+            {/* pin: always has a light outline ring so it stays visible
+                even when the surrounding page background happens to be a
+                similar blue tone — not just an "active" glow */}
             <div
               className="rounded-full transition-all duration-500 flex-shrink-0"
               style={{
                 width: isActive ? "10px" : "5px",
                 height: isActive ? "10px" : "5px",
                 background: isActive ? "#0099D9" : "#7CCBEA",
-                boxShadow: isActive ? "0 0 0 5px rgba(0,153,217,0.18)" : "none",
+                border: "1.5px solid rgba(247,251,253,0.85)",
+                boxShadow: isActive
+                  ? "0 0 0 5px rgba(0,153,217,0.18), 0 1px 4px rgba(2,13,22,0.6)"
+                  : "0 1px 3px rgba(2,13,22,0.5)",
               }}
             />
           </div>

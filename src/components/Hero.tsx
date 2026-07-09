@@ -1,55 +1,144 @@
-import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import MagneticButton from "./MagneticButton";
 
 // TO ADD YOUR TWO IMAGES:
 // Drop both files into `public/images/` named exactly "pic1.png" (the
-// front/base image) and "pic2.png" (the image that only shows inside the
-// cursor spotlight). No code changes needed.
-const HERO_BASE_SRC = "/images/pic1.png";
-const HERO_REVEAL_SRC = "/images/pic2.png";
-const REVEAL_RADIUS = 220;
+// front/base image, drawn onto the canvas and permanently erased as the
+// user scratches over it) and "pic2.png" (the image underneath, with
+// the corals — this is what stays revealed). No code changes needed.
+const HERO_BASE_SRC = `${import.meta.env.BASE_URL}images/pic1.png`;
+const HERO_REVEAL_SRC = `${import.meta.env.BASE_URL}images/pic2.png`;
+const ERASE_RADIUS = 70;
 
-function HeroRevealScene({
-  position,
-  active,
-}: {
-  position: { x: number; y: number };
-  active: boolean;
-}) {
+// Draws an image onto a canvas using the same crop-to-fill behavior as
+// CSS's object-fit: cover, so it matches how the reveal image
+// underneath is displayed.
+function drawImageCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, canvasW: number, canvasH: number) {
+  const imgRatio = img.width / img.height;
+  const canvasRatio = canvasW / canvasH;
+  let drawW: number, drawH: number, offsetX: number, offsetY: number;
+
+  if (imgRatio > canvasRatio) {
+    drawH = canvasH;
+    drawW = img.width * (canvasH / img.height);
+    offsetX = (canvasW - drawW) / 2;
+    offsetY = 0;
+  } else {
+    drawW = canvasW;
+    drawH = img.height * (canvasW / img.width);
+    offsetX = 0;
+    offsetY = (canvasH - drawH) / 2;
+  }
+  ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+}
+
+function HeroRevealScene() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
   const [baseFailed, setBaseFailed] = useState(false);
   const [revealFailed, setRevealFailed] = useState(false);
 
+  // draws (or redraws, e.g. after a resize) the base image fresh onto
+  // the canvas — this is what makes the erased scratches reset back to
+  // whole on every page load/refresh.
+  const redraw = () => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    const img = imgRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !container || !img || !ctx || !img.complete) return;
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    ctx.globalCompositeOperation = "source-over";
+    drawImageCover(ctx, img, canvas.width, canvas.height);
+  };
+
+  useEffect(() => {
+    const img = new Image();
+    imgRef.current = img;
+    img.onload = redraw;
+    img.onerror = () => setBaseFailed(true);
+    img.src = HERO_BASE_SRC;
+
+    const onResize = () => redraw();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const eraseAt = (clientX: number, clientY: number) => {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      // skip if outside the canvas bounds — no-op, nothing to erase there
+      if (x < -ERASE_RADIUS || x > rect.width + ERASE_RADIUS || y < -ERASE_RADIUS || y > rect.height + ERASE_RADIUS) return;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.beginPath();
+      ctx.arc(x, y, ERASE_RADIUS, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = "source-over";
+    };
+
+    const onMouseMove = (e: MouseEvent) => eraseAt(e.clientX, e.clientY);
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (t) eraseAt(t.clientX, t.clientY);
+    };
+
+    // listening on window (not just the canvas) is what makes this work
+    // even when the cursor/finger is over the text content — that area
+    // needs pointer-events: auto for its links/buttons to stay
+    // clickable, which would otherwise stop canvas-level listeners from
+    // ever seeing the pointer there.
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchstart", onTouchMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchstart", onTouchMove);
+    };
+  }, []);
+
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      {/* fallback color, always underneath everything */}
       <div
         className="absolute inset-0"
         style={{ background: "linear-gradient(180deg, #1C93B9 0%, #158DB2 45%, #106C9E 100%)" }}
       />
 
-      {!baseFailed && (
-        <img
-          src={HERO_BASE_SRC}
-          alt=""
-          onError={() => setBaseFailed(true)}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
-
+      {/* reveal image (corals) — sits underneath the canvas, shows
+          through wherever the canvas has been scratched away */}
       {!revealFailed && (
         <img
           src={HERO_REVEAL_SRC}
           alt=""
           onError={() => setRevealFailed(true)}
           className="absolute inset-0 h-full w-full object-cover"
-          style={{
-            clipPath: `circle(${active ? REVEAL_RADIUS : 0}px at ${position.x}px ${position.y}px)`,
-            transition: "clip-path 0.18s ease-out",
-          }}
+        />
+      )}
+
+      {/* canvas: pic1 is drawn onto this and permanently erased in a
+          circle wherever the mouse/finger passes over it */}
+      {!baseFailed && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 h-full w-full"
+          style={{ touchAction: "pan-y" }}
         />
       )}
 
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         style={{ background: "linear-gradient(180deg, rgba(3,30,49,0) 40%, rgba(3,30,49,0.75) 100%)" }}
       />
     </div>
@@ -57,47 +146,13 @@ function HeroRevealScene({
 }
 
 export default function Hero() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [active, setActive] = useState(false);
-  const [isPointerFine, setIsPointerFine] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const media = window.matchMedia("(pointer: fine)");
-    const update = () => setIsPointerFine(media.matches);
-
-    update();
-    media.addEventListener?.("change", update);
-
-    return () => media.removeEventListener?.("change", update);
-  }, []);
-
-  useEffect(() => {
-    if (!isPointerFine) {
-      setActive(false);
-    }
-  }, [isPointerFine]);
-
-  const handleMove = (e: ReactMouseEvent<HTMLElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setPosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-    setActive(true);
-  };
-
   return (
     <section
       id="hero"
       data-stage="Surface"
       className="relative min-h-screen overflow-hidden pt-[42vh] pb-20 text-foam"
-      onMouseMove={isPointerFine ? handleMove : undefined}
-      onMouseEnter={() => isPointerFine && setActive(true)}
-      onMouseLeave={() => setActive(false)}
     >
-      <HeroRevealScene position={position} active={isPointerFine && active} />
+      <HeroRevealScene />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1160px] px-7 pointer-events-none">
         <div className="pointer-events-auto max-w-[680px]">

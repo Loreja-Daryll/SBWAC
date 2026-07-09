@@ -143,16 +143,20 @@ function Kelp({ x, height = 80, duration = 8, delay = "0s" }: { x: string; heigh
 
 export default function SeafloorRocks() {
   return (
-    <div className="absolute inset-x-0 top-0 h-[110px] overflow-hidden pointer-events-none" aria-hidden="true">
-      <BackRidge />
-      <Kelp x="12%" height="68" duration={7} />
-      <Kelp x="78%" height="54" duration={9} delay="-3s" />
-      <Boulder x="-2%" size={0.9} tone="mid" />
-      <Boulder x="16%" size={1.1} tone="dark" />
-      <Boulder x="42%" size={0.75} tone="mid" flip />
-      <Boulder x="60%" size={1.25} tone="dark" flip />
-      <Boulder x="84%" size={0.95} tone="mid" />
-      <Pebbles />
+    <div className="hidden sm:block absolute inset-x-0 top-0 h-[88px] lg:h-[110px] overflow-hidden pointer-events-none" aria-hidden="true">
+      <div
+        className="absolute inset-x-0 bottom-0 h-[110px] scale-[0.8] lg:scale-100 origin-bottom"
+      >
+        <BackRidge />
+        <Kelp x="12%" height={68} duration={7} />
+        <Kelp x="78%" height={54} duration={9} delay="-3s" />
+        <Boulder x="-2%" size={0.9} tone="mid" />
+        <Boulder x="16%" size={1.1} tone="dark" />
+        <Boulder x="42%" size={0.75} tone="mid" flip />
+        <Boulder x="60%" size={1.25} tone="dark" flip />
+        <Boulder x="84%" size={0.95} tone="mid" />
+        <Pebbles />
+      </div>
     </div>
   );
 }

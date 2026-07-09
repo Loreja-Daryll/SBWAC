@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 
 const LINKS = [
-  { href: "#method", label: "The Path" },
-  { href: "#programs", label: "Training" },
-  { href: "#videos", label: "Videos" },
-  { href: "#involved", label: "Get Involved" },
-  { href: "#faq", label: "FAQ" },
+  { href: "#method", id: "method", label: "The Path" },
+  { href: "#programs", id: "programs", label: "Training" },
+  { href: "#videos", id: "videos", label: "Videos" },
+  { href: "#involved", id: "involved", label: "Get Involved" },
+  { href: "#faq", id: "faq", label: "FAQ" },
 ];
 
 function GridIcon() {
@@ -31,6 +31,7 @@ function CloseIcon() {
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -47,6 +48,26 @@ export default function Nav() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // tracks which section is currently in view, so the matching nav
+  // link can show a "you are here" marker
+  useEffect(() => {
+    const sections = LINKS.map((l) => document.getElementById(l.id)).filter(
+      (el): el is HTMLElement => el !== null
+    );
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        });
+      },
+      { threshold: 0.4, rootMargin: "-35% 0px -45% 0px" }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
@@ -61,40 +82,67 @@ export default function Nav() {
           </span>
         </div>
 
-        {/* desktop nav */}
-        <nav className="hidden md:flex gap-8 text-[14px] text-brand-100">
-          {LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="hover:text-brand-300 transition-colors">
-              {l.label}
+        {/* everything else (nav links + button + mobile toggle) is
+            grouped together here, so justify-between on the parent
+            guarantees maximum separation from the logo — this whole
+            group sits flush at the right edge */}
+        <div className="flex items-center gap-8">
+          <nav className="hidden md:flex gap-8 text-[14px] text-brand-100">
+            {LINKS.map((l) => {
+              const isActive = l.id === activeId;
+              return (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setActiveId(l.id)}
+                  className="relative pb-1 transition-colors hover:text-brand-300"
+                  style={{ color: isActive ? "#F7FBFD" : undefined }}
+                >
+                  {l.label}
+                  <span
+                    className="absolute left-0 right-0 bottom-0 rounded-full transition-all duration-300"
+                    style={{
+                      height: 2,
+                      backgroundColor: "#FF7A52",
+                      opacity: isActive ? 1 : 0,
+                      transform: isActive ? "scaleX(1)" : "scaleX(0.4)",
+                    }}
+                  />
+                </a>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <a
+              href="https://facebook.com/SorsogonBlueWaves"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-block font-mono text-[12.5px] uppercase tracking-wide text-deep-950 px-5 py-2.5 rounded-full hover:-translate-y-0.5 hover:shadow-lg transition-all"
+              style={{ backgroundColor: "#FF7A52", boxShadow: "0 0 0 rgba(255,122,82,0)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 10px 25px rgba(255,122,82,0.4)")}
+              onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 0 0 rgba(255,122,82,0)")}
+            >
+              Join the Mission
             </a>
-          ))}
-        </nav>
 
-        <div className="flex items-center gap-3">
-          <a
-            href="https://facebook.com/SorsogonBlueWaves"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:inline-block font-mono text-[12.5px] uppercase tracking-wide text-deep-950 bg-brand px-5 py-2.5 rounded-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/40 transition-all"
-          >
-            Join the Mission
-          </a>
-
-          {/* mobile toggle — a box button with a dashboard-grid icon,
-              morphing into an X when open. relative z ensures it stays
-              above the drawer regardless of stacking quirks. */}
-          <button
+            {/* mobile toggle — a box button with a dashboard-grid icon,
+                morphing into an X when open. relative z ensures it stays
+                above the drawer regardless of stacking quirks. */}
+            <button
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="md:hidden relative z-[110] w-10 h-10 rounded-xl flex items-center justify-center text-brand-300 transition-colors"
+            className="md:hidden relative z-[110] w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
             style={{
-              backgroundColor: "rgba(124, 203, 234, 0.14)",
-              border: "1px solid rgba(247,251,253,0.15)",
+              backgroundColor: "rgba(255, 122, 82, 0.16)",
+              border: "1px solid rgba(255, 122, 82, 0.4)",
+              color: "#FF7A52",
             }}
           >
             {menuOpen ? <CloseIcon /> : <GridIcon />}
           </button>
+          </div>
         </div>
       </div>
 
@@ -119,22 +167,36 @@ export default function Nav() {
             width: "min(260px, 78vw)",
           }}
         >
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              onClick={() => setMenuOpen(false)}
-              className="py-3 text-[15px] text-brand-100 border-b border-foam/10 last:border-b-0 hover:text-brand-300 transition-colors"
-            >
-              {l.label}
-            </a>
-          ))}
+          {LINKS.map((l) => {
+            const isActive = l.id === activeId;
+            return (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => {
+                  setActiveId(l.id);
+                  setMenuOpen(false);
+                }}
+                className="py-3 text-[15px] border-b border-foam/10 last:border-b-0 transition-colors flex items-center gap-2"
+                style={{ color: isActive ? "#F7FBFD" : undefined }}
+              >
+                {isActive && (
+                  <span
+                    className="inline-block rounded-full flex-shrink-0"
+                    style={{ width: 6, height: 6, backgroundColor: "#FF7A52" }}
+                  />
+                )}
+                <span className={isActive ? "" : "text-brand-100"}>{l.label}</span>
+              </a>
+            );
+          })}
           <a
             href="https://facebook.com/SorsogonBlueWaves"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMenuOpen(false)}
-            className="mt-4 text-center font-mono text-[12.5px] uppercase tracking-wide text-deep-950 bg-brand px-5 py-3 rounded-full"
+            className="mt-4 text-center font-mono text-[12.5px] uppercase tracking-wide text-deep-950 px-5 py-3 rounded-full"
+            style={{ backgroundColor: "#FF7A52" }}
           >
             Join the Mission
           </a>

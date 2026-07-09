@@ -95,21 +95,21 @@ export default function SwimmerCursor() {
 
   if (!enabled) return null;
 
-  const finTone = hovering ? "#FF7A52" : "#F7FBFD";
-  const bellyTone = hovering ? "#FFB199" : "#CDEBF7";
-  const bodyTopTone = hovering ? "#FF9770" : "#0099D9";
+const bodyTopTone = hovering ? "#f9bba4" : "#fa5c1e";
+const bellyTone   = hovering ? "#fabd9a" : "#fea87a";
+const finTone     = hovering ? "#f9dbc5" : "#f7b58f";
 
   return (
     <>
       <div
         ref={bubble2Ref}
         className="fixed top-0 left-0 z-[9998] pointer-events-none rounded-full"
-        style={{ width: 4, height: 4, marginLeft: -2, marginTop: -2, background: "#7CCBEA", opacity: 0.35 }}
+        style={{ width: 4, height: 4, marginLeft: -2, marginTop: -2, background: "#FFC2A8", opacity: 0.4 }}
       />
       <div
         ref={bubble1Ref}
         className="fixed top-0 left-0 z-[9998] pointer-events-none rounded-full"
-        style={{ width: 6, height: 6, marginLeft: -3, marginTop: -3, background: "#7CCBEA", opacity: 0.5 }}
+        style={{ width: 6, height: 6, marginLeft: -3, marginTop: -3, background: "#FF7A52", opacity: 0.55 }}
       />
       <div
         ref={wrapRef}
@@ -121,7 +121,10 @@ export default function SwimmerCursor() {
           height={hovering ? 26 : 23}
           viewBox="0 0 50 26"
           fill="none"
-          style={{ transition: "width 0.25s ease, height 0.25s ease" }}
+          style={{
+            transition: "width 0.25s ease, height 0.25s ease",
+            filter: "drop-shadow(0 1px 3px rgba(2,13,22,0.55))",
+          }}
         >
           <defs>
             <linearGradient id={`swimmer-${gradId}`} x1="10" y1="4" x2="42" y2="22">
@@ -131,15 +134,19 @@ export default function SwimmerCursor() {
           </defs>
 
           {/* forked tail fin */}
-          <path d="M12 13 L-2 3 L5 13 L-2 23 Z" fill={finTone} opacity="0.85" />
+          <path d="M12 13 L-2 3 L5 13 L-2 23 Z" fill={finTone} stroke="#031E31" strokeWidth="0.6" strokeOpacity="0.35" opacity="0.85" />
 
           {/* dorsal fin */}
-          <path d="M20 5 C 24 -3, 33 -3, 37 4 C 31 6, 25 6, 20 5 Z" fill={bellyTone} opacity="0.9" />
+          <path d="M20 5 C 24 -3, 33 -3, 37 4 C 31 6, 25 6, 20 5 Z" fill={bellyTone} stroke="#031E31" strokeWidth="0.6" strokeOpacity="0.35" opacity="0.9" />
 
-          {/* body */}
+          {/* body — outlined so it stays visible even when the fish's
+              own fill color is close to the background it's over */}
           <path
             d="M46 13 C 45 6, 36 2, 24 2 C 15 2, 8 6, 6 11 C 4 12.3, 4 13.7, 6 15 C 8 20, 15 24, 24 24 C 36 24, 45 20, 46 13 Z"
             fill={`url(#swimmer-${gradId})`}
+            stroke="#ea5353"
+            strokeWidth="0.75"
+            strokeOpacity="0.55"
           />
 
           {/* gill mark */}

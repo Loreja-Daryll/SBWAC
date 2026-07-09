@@ -1,103 +1,50 @@
 import { useId } from "react";
 
-// Decorative, non-interactive marine life. Built as naturalist-editorial
-// style vector illustration: real coral forms, real fish proportions,
-// gradient shading for depth. Density and species escalate with page depth.
+// Decorative, non-interactive marine life. Corals use a soft, single-tone
+// silhouette style (flat translucent color, minimal internal detail) to
+// match the site's understated "seen through deep water" aesthetic —
+// no multi-stop gradients, just quiet, low-opacity shapes.
 
-function StaghornCoral({ side = "left", opacity = 0.7 }: { side?: "left" | "right"; opacity?: number }) {
-  const id = useId();
-  const flip = side === "right" ? "scaleX(-1)" : "none";
+// A real turtle photo/illustration, placed as a soft, low-opacity
+// background element — matching the site's "seen through deep water"
+// aesthetic, just using a real image instead of hand-drawn SVG shapes.
+//
+// TO REPLACE THE IMAGE: drop a file into `public/images/` named exactly
+// "turtle.png" (transparent background works best). No code changes
+// needed — if the file is missing, this quietly renders nothing rather
+// than showing a broken image icon.
+export function Turtle({
+  top = "40%",
+  left = "45%",
+  size = 1,
+  opacity = 0.1,
+  facing = "right",
+}: {
+  top?: string;
+  left?: string;
+  size?: number;
+  opacity?: number;
+  facing?: "left" | "right";
+}) {
   return (
-    <svg
-      className="absolute bottom-0"
-      style={{ [side]: "1%", transform: flip, transformOrigin: "bottom center", animation: "sway 9s ease-in-out infinite" } as React.CSSProperties}
-      width="130"
-      height="180"
-      viewBox="0 0 130 180"
-      fill="none"
-    >
-      <defs>
-        <linearGradient id={`stag-${id}`} x1="0" y1="180" x2="0" y2="0">
-          <stop offset="0%" stopColor="#046B98" />
-          <stop offset="100%" stopColor="#7CCBEA" />
-        </linearGradient>
-      </defs>
-      <g stroke={`url(#stag-${id})`} strokeLinecap="round" opacity={opacity}>
-        <path d="M30 180 C 28 140, 34 120, 26 90" strokeWidth="7" />
-        <path d="M26 90 C 20 74, 8 66, 4 48" strokeWidth="5" />
-        <path d="M26 90 C 32 72, 30 58, 40 42" strokeWidth="5" />
-        <path d="M40 42 C 44 30, 42 18, 50 4" strokeWidth="3.5" />
-        <path d="M40 42 C 46 34, 56 32, 62 22" strokeWidth="3.5" />
-        <path d="M60 180 C 62 148, 56 128, 64 104" strokeWidth="8" />
-        <path d="M64 104 C 70 86, 82 80, 88 62" strokeWidth="5.5" />
-        <path d="M64 104 C 58 88, 60 74, 50 58" strokeWidth="5" />
-        <path d="M88 62 C 92 48, 90 34, 98 18" strokeWidth="3.5" />
-        <path d="M88 62 C 82 52, 70 50, 64 40" strokeWidth="3.5" />
-      </g>
-    </svg>
-  );
-}
-
-function BrainCoral({ opacity = 0.6 }: { opacity?: number }) {
-  const id = useId();
-  return (
-    <svg className="absolute bottom-0 left-[38%]" width="150" height="70" viewBox="0 0 150 70" fill="none">
-      <defs>
-        <radialGradient id={`brain-${id}`} cx="35%" cy="30%" r="75%">
-          <stop offset="0%" stopColor="#7CCBEA" />
-          <stop offset="100%" stopColor="#046B98" />
-        </radialGradient>
-      </defs>
-      <path
-        d="M8 70 C -2 42, 18 18, 46 16 C 58 4, 82 2, 96 14 C 122 10, 148 26, 144 46 C 150 62, 132 70, 118 66 C 100 74, 76 72, 62 64 C 42 74, 16 70, 8 70 Z"
-        fill={`url(#brain-${id})`}
-        opacity={opacity}
-      />
-      <g stroke="#031E31" strokeWidth="1.4" opacity={opacity * 0.35} strokeLinecap="round">
-        <path d="M16 58 C 30 44, 44 50, 52 40 C 62 50, 76 44, 86 52 C 98 42, 112 48, 124 40" fill="none" />
-        <path d="M20 46 C 34 34, 46 38, 56 28 C 68 38, 82 32, 94 40 C 106 30, 120 36, 132 28" fill="none" />
-      </g>
-    </svg>
-  );
-}
-
-function SeaFan({ side = "left", opacity = 0.55 }: { side?: "left" | "right"; opacity?: number }) {
-  const id = useId();
-  const flip = side === "right" ? "scaleX(-1)" : "none";
-  const lines = Array.from({ length: 9 }).map((_, i) => {
-    const angle = -70 + i * 17.5;
-    const rad = (angle * Math.PI) / 180;
-    const len = 78;
-    const x = 10 + Math.sin(rad) * len;
-    const y = 100 - Math.cos(rad) * len;
-    return { x, y };
-  });
-  return (
-    <svg
-      className="absolute bottom-0"
-      style={{ [side]: "14%", transform: flip, transformOrigin: "bottom left", animation: "sway 7s ease-in-out infinite", animationDelay: "-2s" } as React.CSSProperties}
-      width="120"
-      height="110"
-      viewBox="0 0 120 110"
-      fill="none"
-    >
-      <defs>
-        <linearGradient id={`fan-${id}`} x1="10" y1="100" x2="90" y2="10">
-          <stop offset="0%" stopColor="#0082BA" />
-          <stop offset="100%" stopColor="#7CCBEA" />
-        </linearGradient>
-      </defs>
-      <g opacity={opacity}>
-        {lines.map((p, i) => (
-          <path key={i} d={`M10 100 L${p.x.toFixed(1)} ${p.y.toFixed(1)}`} stroke={`url(#fan-${id})`} strokeWidth="2" strokeLinecap="round" />
-        ))}
-        <path
-          d={`M10 100 ${lines.map((p) => `L${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ")} Z`}
-          fill={`url(#fan-${id})`}
-          opacity="0.12"
-        />
-      </g>
-    </svg>
+    <img
+      src={`${import.meta.env.BASE_URL}images/turtle.png`}
+      alt=""
+      aria-hidden="true"
+      onError={(e) => {
+        e.currentTarget.style.display = "none";
+      }}
+      className="absolute"
+      style={{
+        top,
+        left,
+        width: 220 * size,
+        height: "auto",
+        opacity,
+        objectFit: "contain",
+        transform: facing === "left" ? "scaleX(-1)" : "none",
+      }}
+    />
   );
 }
 
@@ -298,9 +245,7 @@ export function ShallowsLife() {
 export function ReefLife() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      <StaghornCoral side="left" opacity={0.85} />
-      <SeaFan side="right" opacity={0.6} />
-      <BrainCoral opacity={0.55} />
+      <Turtle top="83%" left="20%" size={1.5} opacity={0.1} />
       <HeroFish top="14%" left="55%" size={1.1} variant="angel" duration={34} facing="left" />
       <FishSchool top="10%" duration={26} size={0.8} opacity={0.4} color="#0099D9" />
       <FishSchool top="85%" duration={34} reverse size={0.6} opacity={0.3} color="#046B98" />

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import { Turtle } from "./MarineLife";
 
 interface VideoItem {
   id: string;
@@ -6,6 +7,13 @@ interface VideoItem {
   facebookUrl: string;
   thumbnail: string;
 }
+
+// Ang thumbnail path na ito ay gumagamit ng import.meta.env.BASE_URL
+// (imbes na plain "/videos/pic.png") para tama ito kahit locally ("/")
+// o naka-deploy sa GitHub Pages ("/SBWAC/") — kung hardcoded lang ang
+// leading "/", nasisira ito sa GitHub Pages dahil hindi doon nakatira
+// sa domain root ang site.
+const THUMBNAIL_SRC = `${import.meta.env.BASE_URL}videos/pic.png`;
 
 // EDIT THIS: palitan ng totoong Facebook video post links + thumbnail
 // images ninyo. Ang facebookUrl ay yung buong link ng post mismo
@@ -21,57 +29,57 @@ interface VideoItem {
 const VIDEOS: VideoItem[] = [
   {
     id: "v1",
-    title: "Training Day Highlights",
-    facebookUrl: "https://web.facebook.com/reel/1518646319955705",
-    thumbnail: "/videos/pic.png",
+    title: "See the Mission in Motion",
+    facebookUrl: "https://web.facebook.com/reel/1543159040479719",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v2",
-    title: "Meet the Coaches",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/2192208284861537",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v3",
-    title: "First Open Water Swim",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/1034013555830579",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v4",
-    title: "Community Clean-up Day",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/3297716713734404",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v5",
-    title: "A Message From Our Swimmers",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/1011772761377138",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v6",
-    title: "Fun Swim Saturday",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/1684639269440002",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v7",
-    title: "Coastal Clean Dive",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/1673778157264807",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v8",
-    title: "Coastal Clean Dive",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/1532134888553376",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v9",
-    title: "Coastal Clean Dive",
+    title: "See the Mission in Motion",
     facebookUrl: "https://web.facebook.com/reel/2166959150813290",
-    thumbnail: "/videos/pic.png",
+    thumbnail: THUMBNAIL_SRC,
   },
 ];
 
@@ -223,6 +231,7 @@ export default function Videos() {
 
   return (
     <section id="videos" data-stage="Open Water" className="relative overflow-hidden py-28 text-foam">
+      <Turtle top="55%" left="2%" size={1.1} opacity={0.12} facing="left" />
       <div className="max-w-[1160px] mx-auto px-7">
         <div className="text-center mb-12">
           <div className="font-mono text-[12.5px] tracking-widest uppercase text-brand-300 mb-4 flex items-center justify-center gap-2.5">
@@ -237,7 +246,7 @@ export default function Videos() {
         <div className="flex items-center justify-center gap-2 sm:gap-3 lg:gap-4">
           <ChevronButton direction="left" onClick={() => rotate(-1)} />
 
-          <div className="flex items-end justify-center gap-3 lg:gap-4 flex-1 max-w-[820px] overflow-hidden">
+          <div className="flex items-end justify-center gap-3 lg:gap-5 flex-1 max-w-[900px] overflow-hidden">
             {visible.map(({ realIndex, isCenter, video }) => (
               <div
                 key={video.id}
@@ -255,7 +264,7 @@ export default function Videos() {
                 className={
                   isCenter
                     ? "relative shrink-0 w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px] aspect-[9/16] rounded-2xl overflow-hidden shadow-2xl shadow-black/40 bg-deep-900"
-                    : "hidden sm:block relative shrink-0 w-[78px] sm:w-[100px] aspect-[9/16] rounded-xl overflow-hidden border border-foam/10 opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                    : "hidden sm:block relative shrink-0 w-[130px] lg:w-[160px] aspect-[9/16] rounded-xl overflow-hidden border border-foam/10 opacity-70 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                 }
               >
                 {isCenter ? (
