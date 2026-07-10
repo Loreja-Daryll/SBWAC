@@ -113,11 +113,13 @@ function HeroRevealScene() {
 
     const onMouseMove = (e: MouseEvent) => eraseAt(e.clientX, e.clientY);
 
-    // FIX 2: prevent the page from scrolling WHILE the user is actively
-    // dragging a finger to erase. We only start blocking scroll once we
-    // know the touch began inside the Hero section — this keeps normal
-    // scrolling completely unaffected everywhere else on the page.
+    // FIX 2 (revised): only block the page from moving during
+    // HORIZONTAL-dominant drags. Vertical drags (normal scrolling) are
+    // left completely alone so the page always scrolls normally, even
+    // when the gesture starts on the Hero.
     let heroTouchActive = false;
+    let touchStart = { x: 0, y: 0 };
+    let lockedDirection: "vertical" | "horizontal" | null = null;
 
     const onTouchStart = (e: TouchEvent) => {
       const t = e.touches[0];
@@ -128,20 +130,38 @@ function HeroRevealScene() {
         t.clientY <= heroRect.bottom &&
         t.clientX >= heroRect.left &&
         t.clientX <= heroRect.right;
+      touchStart = { x: t.clientX, y: t.clientY };
+      lockedDirection = null;
       if (heroTouchActive) eraseAt(t.clientX, t.clientY);
     };
 
     const onTouchMove = (e: TouchEvent) => {
       const t = e.touches[0];
-      if (!t) return;
-      if (heroTouchActive) {
-        e.preventDefault(); // stops the page from scrolling during this gesture
-        eraseAt(t.clientX, t.clientY);
+      if (!t || !heroTouchActive) return;
+
+      // figure out (once per gesture) whether this drag is mostly
+      // vertical or mostly horizontal, based on its first ~8px of
+      // movement, then keep that decision for the rest of the gesture
+      // so behavior doesn't flip mid-drag.
+      if (lockedDirection === null) {
+        const dx = t.clientX - touchStart.x;
+        const dy = t.clientY - touchStart.y;
+        if (Math.sqrt(dx * dx + dy * dy) > 8) {
+          lockedDirection = Math.abs(dy) > Math.abs(dx) ? "vertical" : "horizontal";
+        }
       }
+
+      // only horizontal drags block the page from moving — vertical
+      // drags are left untouched so normal scrolling always works.
+      if (lockedDirection === "horizontal") {
+        e.preventDefault();
+      }
+      eraseAt(t.clientX, t.clientY);
     };
 
     const onTouchEnd = () => {
       heroTouchActive = false;
+      lockedDirection = null;
     };
 
     // listening on window (not just the canvas) is what makes erasing
@@ -151,8 +171,9 @@ function HeroRevealScene() {
     // ever seeing the pointer there.
     window.addEventListener("mousemove", onMouseMove);
     // passive: false is required here so preventDefault() actually
-    // works — but since we only call it when heroTouchActive is true,
-    // scrolling anywhere else on the page is never affected.
+    // works for the horizontal case — vertical drags never call
+    // preventDefault, so scrolling elsewhere (and vertical scrolling
+    // through the Hero itself) is never affected.
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
@@ -198,15 +219,14 @@ function HeroRevealScene() {
       {/* canvas: pic1 is drawn onto this and permanently erased in a
           circle wherever the mouse/finger passes over it. Only
           interactive/visible once it has actually finished its first
-          draw (see canvasReady above). touchAction: none here, since
-          scroll-prevention during erasing is now handled precisely in
-          JS above rather than left to the browser's default gesture
-          handling. */}
+          draw (see canvasReady above). touchAction: pan-y lets the
+          browser handle vertical scrolling natively; horizontal
+          movement is governed by the JS logic above instead. */}
       {!baseFailed && (
         <canvas
           ref={canvasRef}
           className="absolute inset-0 h-full w-full"
-          style={{ touchAction: "none", opacity: canvasReady ? 1 : 0 }}
+          style={{ touchAction: "pan-y", opacity: canvasReady ? 1 : 0 }}
         />
       )}
 

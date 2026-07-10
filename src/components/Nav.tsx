@@ -87,7 +87,14 @@ export default function Nav() {
             guarantees maximum separation from the logo — this whole
             group sits flush at the right edge */}
         <div className="flex items-center gap-8">
-          <nav className="hidden md:flex gap-8 text-[14px] text-brand-100">
+          <nav
+            className="hidden md:flex gap-8 transition-all duration-300"
+            style={{
+              color: scrolled ? undefined : "#031E31",
+              fontSize: scrolled ? "14px" : "16px",
+              fontWeight: scrolled ? 400 : 700,
+            }}
+          >
             {LINKS.map((l) => {
               const isActive = l.id === activeId;
               return (
@@ -95,8 +102,8 @@ export default function Nav() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setActiveId(l.id)}
-                  className="relative pb-1 transition-colors hover:text-brand-300"
-                  style={{ color: isActive ? "#F7FBFD" : undefined }}
+                  className={`relative pb-1 transition-colors hover:text-brand-300 ${scrolled ? "text-brand-100" : ""}`}
+                  style={{ color: isActive ? (scrolled ? "#F7FBFD" : "#031E31") : undefined }}
                 >
                   {l.label}
                   <span
