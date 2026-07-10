@@ -142,7 +142,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="inline-block font-mono text-[12.5px] uppercase tracking-wide text-deep-950 bg-brand px-5 py-2.5 rounded-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/40 transition-all"
             >
-              Become a Partner
+              Where To Go?
             </a>
           </div>
         </div>
