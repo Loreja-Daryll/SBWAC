@@ -14,14 +14,15 @@ export default function Story() {
             Why This Exists
           </div>
           <h2 className="font-display font-semibold text-[28px] sm:text-[36px] lg:text-[42px] text-foam leading-tight">
-            Not a business. A promise to Sorsogon.
+            A Promise to Sorsogon.
           </h2>
           <p className="mt-6 text-[16px] leading-relaxed text-brand-100 font-medium max-w-[440px]">
-            Blue Waves is being built as a nonprofit, mission-first club,
-            not a business built to extract from the community it serves.
-            The goal is simple: give Sorsogon's young dreamers a real path
-            to becoming athletes, while raising a generation that protects
-            this coastline and helps the world discover it, the right way.
+            Blue Waves is being built as a mission-first club, rooted in
+            the community it serves and shaped by the people who show
+            up for it every day. The goal is simple: give Sorsogon's
+            young dreamers a real path to becoming athletes, while
+            raising a generation that protects this coastline and helps
+            the world discover it, the right way.
           </p>
         </div>
 

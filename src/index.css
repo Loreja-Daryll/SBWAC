@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=Inter:wght@300;400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,22 +7,24 @@ html {
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Calibri", "Candara", "Segoe UI", "Optima", sans-serif;
   font-weight: 400;
   color: #F7FBFD;
   background: #063A5C;
 }
 
-/* Type refinement: readable body weight, controlled headline weight, wider
-   tracking on labels, applied globally so every section stays consistent
-   without editing each component's utility classes one by one. */
+/* Type refinement: readable body weight, controlled headline weight,
+   applied globally so every section stays consistent without editing
+   each component's utility classes one by one. Calibri reads well at
+   normal tracking, so the tight negative letter-spacing tuned for the
+   old display serif has been removed. */
 h1, h2, h3 {
-  font-weight: 400 !important;
-  letter-spacing: -0.015em;
+  font-weight: 600 !important;
+  letter-spacing: normal;
 }
 .font-mono {
   font-weight: 500 !important;
-  letter-spacing: 0.14em !important;
+  letter-spacing: 0.08em !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -82,4 +82,9 @@ html.swimmer-cursor-active * {
   0% { transform: translateX(0) translateY(0); }
   50% { transform: translateX(-2.5%) translateY(4px); }
   100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes scrollCueBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(6px); opacity: 1; }
 }

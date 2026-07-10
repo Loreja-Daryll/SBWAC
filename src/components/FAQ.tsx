@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const ITEMS = [
-  { q: "Is Blue Waves a business?", a: "No. It is being built as a nonprofit, mission-led club for Sorsogon. The focus is developing local athletes and protecting the coastline, not running programs for profit." },
+  { q: "Is Blue Waves a business?", a: "No. Blue Waves is a mission-led club built for Sorsogon, focused on developing local athletes and protecting the coastline together with the community." },
   { q: "Do I need experience to join?", a: "No. Learn-to-Swim starts from zero, and Intro to Free Diving requires no prior experience either." },
   { q: "Who can join?", a: "Both kids and adults. Message us with your age and goal and we will point you to the right path and schedule." },
   { q: "Is freediving safe for beginners?", a: "Every freediving session is coach-led, and the certification pathway is built around proper training, not shortcuts. Depth comes after fundamentals, not before them." },

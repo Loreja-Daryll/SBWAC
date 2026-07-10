@@ -78,7 +78,7 @@ export default function Nav() {
         <div className="flex items-center gap-3">
           <img src={logo} alt="Sorsogon Blue Waves Aquatics Club" className="w-9 h-9 object-contain" />
           <span className="font-display font-semibold text-[15px] text-foam">
-            Blue Waves <span className="font-mono font-normal text-[12px] text-brand-300 uppercase tracking-wide">Nonprofit Mission</span>
+            Blue Waves <span className="font-mono font-normal text-[12px] text-brand-300 uppercase tracking-wide">Aquatics Mission</span>
           </span>
         </div>
 

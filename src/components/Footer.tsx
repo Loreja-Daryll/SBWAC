@@ -67,7 +67,7 @@ export default function Footer() {
               </strong>
             </div>
             <p className="text-[13.5px] mt-3 leading-relaxed">
-              A nonprofit mission for Sorsogon, Bicol Region, Philippines.
+              A community mission for Sorsogon, Bicol Region, Philippines.
               <br />
               Swim &middot; Dive &middot; Excel
             </p>
@@ -116,7 +116,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-5 font-mono text-[12px] text-brand-700 text-center sm:text-center">
+        <div className="pt-5 font-mono text-[12px] text-brand-700 text-center sm:text-left">
           &copy; 2026 Sorsogon Blue Waves Aquatics Club. From pool to ocean.
         </div>
       </div>

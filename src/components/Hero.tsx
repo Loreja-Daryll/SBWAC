@@ -16,19 +16,17 @@ const ERASE_RADIUS = 70;
 function drawImageCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, canvasW: number, canvasH: number) {
   const imgRatio = img.width / img.height;
   const canvasRatio = canvasW / canvasH;
-  let drawW: number, drawH: number, offsetX: number, offsetY: number;
+  let drawW: number, drawH: number;
 
   if (imgRatio > canvasRatio) {
     drawH = canvasH;
     drawW = img.width * (canvasH / img.height);
-    offsetX = (canvasW - drawW) / 2;
-    offsetY = 0;
   } else {
     drawW = canvasW;
     drawH = img.height * (canvasW / img.width);
-    offsetX = 0;
-    offsetY = (canvasH - drawH) / 2;
   }
+  const offsetX = (canvasW - drawW) / 2;
+  const offsetY = (canvasH - drawH) / 2;
   ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
 }
 
@@ -43,10 +41,15 @@ function HeroRevealScene() {
   // guaranteed-reliable fallback — this is what prevents any chance of
   // pic2 flashing/showing through on load before the canvas is ready.
   const [canvasReady, setCanvasReady] = useState(false);
+  // remembers the canvas's last drawn pixel size, so we can tell a
+  // genuine resize/orientation change apart from the mobile browser's
+  // address bar collapsing/expanding during scroll (which only changes
+  // window height, not width, but still fires a "resize" event).
+  const lastSizeRef = useRef({ width: 0, height: 0 });
 
-  // draws (or redraws, e.g. after a resize) the base image fresh onto
-  // the canvas — this is what makes the erased scratches reset back to
-  // whole on every page load/refresh.
+  // draws (or redraws) the base image fresh onto the canvas — this is
+  // what makes the erased scratches reset back to whole. Only called on
+  // first load and on genuine resizes, NOT on every scroll.
   const redraw = () => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -56,6 +59,7 @@ function HeroRevealScene() {
     const rect = container.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
+    lastSizeRef.current = { width: rect.width, height: rect.height };
     ctx.globalCompositeOperation = "source-over";
     drawImageCover(ctx, img, canvas.width, canvas.height);
     setCanvasReady(true);
@@ -68,14 +72,30 @@ function HeroRevealScene() {
     img.onerror = () => setBaseFailed(true);
     img.src = HERO_BASE_SRC;
 
-    const onResize = () => redraw();
+    // FIX 1: on mobile, scrolling can collapse/expand the browser's
+    // address bar, which changes window.innerHeight and fires a
+    // "resize" event even though nothing actually resized in a way
+    // that matters. Redrawing on that event was wiping out the user's
+    // scratches every time they scrolled. Only redraw when the WIDTH
+    // actually changes (a real resize/orientation change) or when the
+    // height changes by a large amount (a real rotation), not the
+    // small height jitter from the address bar.
+    const onResize = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const widthChanged = Math.abs(rect.width - lastSizeRef.current.width) > 2;
+      const heightChanged = Math.abs(rect.height - lastSizeRef.current.height) > 150;
+      if (widthChanged || heightChanged) redraw();
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
 
     const eraseAt = (clientX: number, clientY: number) => {
       const ctx = canvas.getContext("2d");
@@ -83,7 +103,6 @@ function HeroRevealScene() {
       const rect = canvas.getBoundingClientRect();
       const x = clientX - rect.left;
       const y = clientY - rect.top;
-      // skip if outside the canvas bounds — no-op, nothing to erase there
       if (x < -ERASE_RADIUS || x > rect.width + ERASE_RADIUS || y < -ERASE_RADIUS || y > rect.height + ERASE_RADIUS) return;
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
@@ -93,24 +112,56 @@ function HeroRevealScene() {
     };
 
     const onMouseMove = (e: MouseEvent) => eraseAt(e.clientX, e.clientY);
-    const onTouchMove = (e: TouchEvent) => {
+
+    // FIX 2: prevent the page from scrolling WHILE the user is actively
+    // dragging a finger to erase. We only start blocking scroll once we
+    // know the touch began inside the Hero section — this keeps normal
+    // scrolling completely unaffected everywhere else on the page.
+    let heroTouchActive = false;
+
+    const onTouchStart = (e: TouchEvent) => {
       const t = e.touches[0];
-      if (t) eraseAt(t.clientX, t.clientY);
+      if (!t) return;
+      const heroRect = container.getBoundingClientRect();
+      heroTouchActive =
+        t.clientY >= heroRect.top &&
+        t.clientY <= heroRect.bottom &&
+        t.clientX >= heroRect.left &&
+        t.clientX <= heroRect.right;
+      if (heroTouchActive) eraseAt(t.clientX, t.clientY);
     };
 
-    // listening on window (not just the canvas) is what makes this work
-    // even when the cursor/finger is over the text content — that area
-    // needs pointer-events: auto for its links/buttons to stay
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      if (heroTouchActive) {
+        e.preventDefault(); // stops the page from scrolling during this gesture
+        eraseAt(t.clientX, t.clientY);
+      }
+    };
+
+    const onTouchEnd = () => {
+      heroTouchActive = false;
+    };
+
+    // listening on window (not just the canvas) is what makes erasing
+    // work even when the cursor/finger is over the text content — that
+    // area needs pointer-events: auto for its links/buttons to stay
     // clickable, which would otherwise stop canvas-level listeners from
     // ever seeing the pointer there.
     window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("touchstart", onTouchMove, { passive: true });
+    // passive: false is required here so preventDefault() actually
+    // works — but since we only call it when heroTouchActive is true,
+    // scrolling anywhere else on the page is never affected.
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchstart", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
     };
   }, []);
 
@@ -135,10 +186,7 @@ function HeroRevealScene() {
 
       {/* GUARANTEED fallback: a plain, always-reliable <img> of pic1.
           Shown until the canvas below has confirmed it finished
-          drawing — this is what makes it impossible for pic2 to ever
-          show through before the user has actually scratched anything,
-          even on a slow connection, even if the canvas somehow never
-          becomes ready. */}
+          drawing. */}
       {!baseFailed && !canvasReady && (
         <img
           src={HERO_BASE_SRC}
@@ -150,12 +198,15 @@ function HeroRevealScene() {
       {/* canvas: pic1 is drawn onto this and permanently erased in a
           circle wherever the mouse/finger passes over it. Only
           interactive/visible once it has actually finished its first
-          draw (see canvasReady above). */}
+          draw (see canvasReady above). touchAction: none here, since
+          scroll-prevention during erasing is now handled precisely in
+          JS above rather than left to the browser's default gesture
+          handling. */}
       {!baseFailed && (
         <canvas
           ref={canvasRef}
           className="absolute inset-0 h-full w-full"
-          style={{ touchAction: "pan-y", opacity: canvasReady ? 1 : 0 }}
+          style={{ touchAction: "none", opacity: canvasReady ? 1 : 0 }}
         />
       )}
 
@@ -184,7 +235,7 @@ export default function Hero() {
 
           <div className="mb-5 flex items-center gap-2.5 font-mono text-[12.5px] uppercase tracking-widest text-brand-300">
             <span className="inline-block h-px w-5 bg-brand" />
-            A Nonprofit Aquatics Mission &middot; Sorsogon, Philippines
+            A Community Aquatics Mission &middot; Sorsogon, Philippines
           </div>
           <h1 className="font-display text-[42px] font-semibold leading-[0.98] tracking-[-0.02em] sm:text-[64px] lg:text-[78px]">
             Raising
@@ -194,7 +245,7 @@ export default function Hero() {
             <span className="text-brand-300">Protecting the sea.</span>
           </h1>
           <p className="mt-7 max-w-[480px] text-[18px] text-brand-100">
-            A community-led, nonprofit aquatics mission giving young
+            A community-led aquatics mission giving young
             dreamers in Sorsogon a real path to becoming athletes, while
             building a generation that protects our coast and welcomes the
             world back to it, responsibly.
@@ -218,7 +269,7 @@ export default function Hero() {
             </a>
           </div>
           <div className="mt-7 font-mono text-[12px] text-brand-300/80">
-            Nonprofit &middot; community-run &middot; built for Sorsogon
+            Community-led &middot; Coach-guided &middot; Built for Sorsogon
           </div>
         </div>
       </div>

@@ -24,9 +24,14 @@ export default {
         foam: "#F7FBFD",
       },
       fontFamily: {
-        display: ["\"Bodoni Moda\"", "serif"],
-        body: ["Inter", "sans-serif"],
-        mono: ["Inter", "sans-serif"],
+        // Switched from Bodoni Moda/Inter to Calibri for readability —
+        // Calibri isn't installed on every OS, so this stack falls back
+        // to visually similar, widely-available fonts (Candara/Segoe UI
+        // have a similar humanist-rounded feel) before landing on a
+        // generic sans-serif as the final safety net.
+        display: ["Calibri", "Candara", "Segoe UI", "Optima", "sans-serif"],
+        body: ["Calibri", "Candara", "Segoe UI", "Optima", "sans-serif"],
+        mono: ["Calibri", "Candara", "Segoe UI", "Optima", "sans-serif"],
       },
     },
   },
