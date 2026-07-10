@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Turtle } from "./MarineLife";
 
 interface VideoItem {
@@ -29,55 +29,55 @@ const THUMBNAIL_SRC = `${import.meta.env.BASE_URL}videos/pic.png`;
 const VIDEOS: VideoItem[] = [
   {
     id: "v1",
-    title: "See the Mission in Motion",
+    title: "Training Day Highlights",
     facebookUrl: "https://web.facebook.com/reel/1543159040479719",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v2",
-    title: "See the Mission in Motion",
+    title: "Meet the Coaches",
     facebookUrl: "https://web.facebook.com/reel/2192208284861537",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v3",
-    title: "See the Mission in Motion",
+    title: "First Open Water Swim",
     facebookUrl: "https://web.facebook.com/reel/1034013555830579",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v4",
-    title: "See the Mission in Motion",
+    title: "Community Clean-up Day",
     facebookUrl: "https://web.facebook.com/reel/3297716713734404",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v5",
-    title: "See the Mission in Motion",
+    title: "A Message From Our Swimmers",
     facebookUrl: "https://web.facebook.com/reel/1011772761377138",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v6",
-    title: "See the Mission in Motion",
+    title: "Fun Swim Saturday",
     facebookUrl: "https://web.facebook.com/reel/1684639269440002",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v7",
-    title: "See the Mission in Motion",
+    title: "Coastal Clean Dive",
     facebookUrl: "https://web.facebook.com/reel/1673778157264807",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v8",
-    title: "See the Mission in Motion",
+    title: "Coastal Clean Dive",
     facebookUrl: "https://web.facebook.com/reel/1532134888553376",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v9",
-    title: "See the Mission in Motion",
+    title: "Coastal Clean Dive",
     facebookUrl: "https://web.facebook.com/reel/2166959150813290",
     thumbnail: THUMBNAIL_SRC,
   },
@@ -135,6 +135,23 @@ export default function Videos() {
   const total = VIDEOS.length;
   const [centerIndex, setCenterIndex] = useState(Math.floor(total / 2));
 
+  // FIX: on mobile, side thumbnails are hidden, so the desktop FLIP
+  // animation has nothing to animate "from" and the swap just pops
+  // instantly. This tracks mobile viewport + swap direction so a
+  // dedicated slide+fade animation can play instead — desktop is
+  // completely unaffected, since this animation only ever gets applied
+  // when isMobile is true.
+  const [isMobile, setIsMobile] = useState(false);
+  const [swapDirection, setSwapDirection] = useState<"left" | "right" | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   const visible = Array.from({ length: WINDOW_SIDE * 2 + 1 }, (_, i) => {
     const offset = i - WINDOW_SIDE;
     const realIndex = mod(centerIndex + offset, total);
@@ -164,15 +181,32 @@ export default function Videos() {
 
   useLayoutEffect(() => {
     let stillAnimating = false;
+    const mobileCenterId = isMobile ? VIDEOS[centerIndex].id : null;
+
     itemRefs.current.forEach((el, id) => {
-      const prev = prevRects.current.get(id);
+      let prev = prevRects.current.get(id);
+      const next = el.getBoundingClientRect();
+
+      // MOBILE FIX: on mobile, side thumbnails are hidden (display:none),
+      // so the video about to become the new center often DOES have a
+      // "prev" entry (from its old thumbnail position) — it's just
+      // zero-sized, since hidden elements measure as 0x0. That zero-size
+      // was silently skipping the animation entirely. Detect this case
+      // (missing OR zero-sized prev, for the item becoming the mobile
+      // center) and synthesize a real starting position offset to the
+      // correct side, so the same transform logic below can slide it in.
+      const prevIsUsable = prev && !(prev.width === 0 && prev.height === 0);
+      if (!prevIsUsable && id === mobileCenterId && swapDirection && next.width > 0) {
+        const offsetX = swapDirection === "right" ? next.width * 0.4 : -next.width * 0.4;
+        prev = new DOMRect(next.left + offsetX, next.top, next.width, next.height);
+      }
+
       if (!prev) return; // newly entered this rotation, nothing to animate from
       // skip elements that are hidden (mobile: side thumbnails are
       // display:none) — they measure as a zero-size rect at (0,0), which
       // would otherwise make the animation look like it flies in from
       // the top-left corner instead of sliding naturally.
       if (prev.width === 0 && prev.height === 0) return;
-      const next = el.getBoundingClientRect();
       if (next.width === 0 && next.height === 0) return;
       const dx = prev.left - next.left;
       const dy = prev.top - next.top;
@@ -226,6 +260,7 @@ export default function Videos() {
     if (busyRef.current) return;
     captureRects();
     busyRef.current = true;
+    setSwapDirection(dir === 1 ? "right" : "left");
     setCenterIndex((c) => mod(c + dir, total));
   };
 

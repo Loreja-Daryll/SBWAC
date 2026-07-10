@@ -54,13 +54,44 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 bg-deep-950 text-brand-300/70 pt-14 sm:pt-[105px] lg:pt-[130px] pb-8 min-h-[320px]">
+    <footer className="relative z-10 bg-deep-950 text-brand-300/70 pt-6 sm:pt-[105px] lg:pt-[130px] pb-8 min-h-0 sm:min-h-[320px]">
       <SeafloorRocks />
       <div className="max-w-[1160px] mx-auto px-7">
-        <div className="flex flex-col sm:flex-row flex-wrap justify-between items-center sm:items-start text-center sm:text-left gap-x-12 gap-y-10 pb-10 border-b border-foam/10">
+        {/* MOBILE ONLY — simplified: social icons left, small orange
+            "Become a Partner" right, same line if it fits, wraps to its
+            own line on very narrow phones. Desktop/tablet layout below
+            is completely untouched. */}
+        <div className="sm:hidden flex flex-wrap items-center justify-between gap-3 pb-8 border-b border-foam/10">
+          <div className="flex gap-2.5">
+            {socials.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="w-9 h-9 rounded-full border border-foam/15 flex items-center justify-center text-brand-300 hover:text-deep-950 hover:bg-brand-300 hover:border-brand-300 transition-all"
+              >
+                <Icon />
+              </a>
+            ))}
+          </div>
+          <a
+            href={PARTNERSHIP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block font-mono text-[11px] uppercase tracking-wide text-deep-950 px-4 py-2 rounded-full whitespace-nowrap"
+            style={{ backgroundColor: "#FF7A52" }}
+          >
+            Become a Partner
+          </a>
+        </div>
+
+        {/* DESKTOP + TABLET — unchanged from before */}
+        <div className="hidden sm:flex flex-row flex-wrap justify-between items-start text-left gap-x-12 gap-y-10 pb-10 border-b border-foam/10">
           {/* Brand + socials */}
-          <div className="max-w-[280px] flex flex-col items-center sm:items-start">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-2.5">
+          <div className="max-w-[280px] flex flex-col items-start">
+            <div className="flex flex-row items-center gap-2.5">
               <img src={logo} alt="Sorsogon Blue Waves Aquatics Club" className="w-7 h-7 object-contain" />
               <strong className="font-display text-foam text-[18px] leading-tight">
                 Sorsogon Blue Waves Aquatics Club
@@ -88,9 +119,9 @@ export default function Footer() {
           </div>
 
           {/* Quick links */}
-          <div className="flex flex-col items-center sm:items-start">
+          <div className="flex flex-col items-start">
             <div className="font-mono text-[11.5px] uppercase tracking-wide text-foam/50 mb-4">Explore</div>
-            <div className="flex flex-col items-center sm:items-start gap-2.5 text-[13.5px]">
+            <div className="flex flex-col items-start gap-2.5 text-[13.5px]">
               <a href="#method" className="hover:text-brand-500 transition-colors">The Path</a>
               <a href="#programs" className="hover:text-brand-500 transition-colors">Programs</a>
               <a href="#involved" className="hover:text-brand-500 transition-colors">Join the Mission</a>
@@ -100,7 +131,7 @@ export default function Footer() {
           </div>
 
           {/* Partnership CTA */}
-          <div className="max-w-[240px] flex flex-col items-center sm:items-start">
+          <div className="max-w-[240px] flex flex-col items-start">
             <div className="font-mono text-[11.5px] uppercase tracking-wide text-foam/50 mb-4">Partner With Us</div>
             <p className="text-[13.5px] leading-relaxed mb-5">
               Support our swimmers and help grow the mission across Sorsogon.
@@ -111,7 +142,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="inline-block font-mono text-[12.5px] uppercase tracking-wide text-deep-950 bg-brand px-5 py-2.5 rounded-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/40 transition-all"
             >
-              Where To Go?
+              Become a Partner
             </a>
           </div>
         </div>
