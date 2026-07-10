@@ -38,6 +38,11 @@ function HeroRevealScene() {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const [baseFailed, setBaseFailed] = useState(false);
   const [revealFailed, setRevealFailed] = useState(false);
+  // tracks whether the canvas has actually finished drawing pic1 at
+  // least once. Until this is true, a plain <img> of pic1 is shown as a
+  // guaranteed-reliable fallback — this is what prevents any chance of
+  // pic2 flashing/showing through on load before the canvas is ready.
+  const [canvasReady, setCanvasReady] = useState(false);
 
   // draws (or redraws, e.g. after a resize) the base image fresh onto
   // the canvas — this is what makes the erased scratches reset back to
@@ -47,12 +52,13 @@ function HeroRevealScene() {
     const container = containerRef.current;
     const img = imgRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !container || !img || !ctx || !img.complete) return;
+    if (!canvas || !container || !img || !ctx || !img.complete || img.naturalWidth === 0) return;
     const rect = container.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
     ctx.globalCompositeOperation = "source-over";
     drawImageCover(ctx, img, canvas.width, canvas.height);
+    setCanvasReady(true);
   };
 
   useEffect(() => {
@@ -127,13 +133,29 @@ function HeroRevealScene() {
         />
       )}
 
+      {/* GUARANTEED fallback: a plain, always-reliable <img> of pic1.
+          Shown until the canvas below has confirmed it finished
+          drawing — this is what makes it impossible for pic2 to ever
+          show through before the user has actually scratched anything,
+          even on a slow connection, even if the canvas somehow never
+          becomes ready. */}
+      {!baseFailed && !canvasReady && (
+        <img
+          src={HERO_BASE_SRC}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+
       {/* canvas: pic1 is drawn onto this and permanently erased in a
-          circle wherever the mouse/finger passes over it */}
+          circle wherever the mouse/finger passes over it. Only
+          interactive/visible once it has actually finished its first
+          draw (see canvasReady above). */}
       {!baseFailed && (
         <canvas
           ref={canvasRef}
           className="absolute inset-0 h-full w-full"
-          style={{ touchAction: "pan-y" }}
+          style={{ touchAction: "pan-y", opacity: canvasReady ? 1 : 0 }}
         />
       )}
 
