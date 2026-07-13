@@ -59,7 +59,7 @@ export default function Method() {
           The Path
         </div>
         <h2 className="font-display font-semibold text-[28px] sm:text-[36px] lg:text-[42px]">
-          Swim. Dive. Excel.
+          Swim. <span style={{ color: "#FF7A52" }}>Dive.</span> Excel.
         </h2>
         <p className="mt-4 max-w-[560px] text-brand-100 font-medium">
           The same path, every time, because it is the path that actually

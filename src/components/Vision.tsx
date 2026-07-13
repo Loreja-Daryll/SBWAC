@@ -10,7 +10,7 @@ export default function Vision() {
           Why Now
         </div>
         <h2 className="font-display font-semibold text-[28px] sm:text-[36px] lg:text-[42px] mt-2">
-          Dreamers cannot wait for perfect conditions.
+          <span style={{ color: "#FF7A52" }}>Dreamers</span> cannot wait for perfect conditions.
         </h2>
         <p className="mt-4 max-w-[560px] mx-auto text-[18px] text-brand-100">
           Talent does not pause while facilities catch up. What a young

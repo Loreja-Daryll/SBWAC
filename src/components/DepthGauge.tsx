@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useScrollDepth } from "../hooks/useScrollDepth";
 
 const STAGES = [
@@ -13,28 +12,12 @@ const MAX_DEPTH_M = 42;
 
 export default function DepthGauge() {
   const depth = useScrollDepth();
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const sections = STAGES.map((s) => document.getElementById(s.id)).filter(
-      (el): el is HTMLElement => el !== null
-    );
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const idx = sections.indexOf(entry.target as HTMLElement);
-            if (idx !== -1) setActiveIndex(idx);
-          }
-        });
-      },
-      { threshold: 0.5, rootMargin: "-40% 0px -40% 0px" }
-    );
-
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
-  }, []);
+  // Derived directly from the same `depth` value that drives the meter
+  // number below — this guarantees the active stage and the number can
+  // never disagree, unlike the previous approach (DOM position
+  // measurement / IntersectionObserver) which could get stuck if a
+  // section's real on-page position didn't match assumptions.
+  const activeIndex = Math.min(STAGES.length - 1, Math.floor(depth * STAGES.length));
 
   const depthMeters = (depth * MAX_DEPTH_M).toFixed(1);
 

@@ -262,7 +262,7 @@ export default function Hero() {
             <br />
             swimmers.
             <br />
-            <span className="text-brand-300">Protecting the sea.</span>
+            <span style={{ color: "#FF7A52" }}> Protecting </span> <span>the</span> <span style={{ color: "#FF7A52" }}> sea</span>
           </h1>
           <p className="mt-7 max-w-[480px] text-[18px] text-brand-100">
             A community-led aquatics mission giving young
@@ -273,7 +273,7 @@ export default function Hero() {
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <MagneticButton
               href="#involved"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-4 font-mono text-[13px] uppercase tracking-wide text-deep-950 hover:shadow-lg hover:shadow-brand/40"
+              className="inline-flex items-center gap-2 rounded-full px-8 py-4 font-mono text-[13px] uppercase tracking-wide text-deep-950 bg-[#FF7A52] hover:shadow-lg"
             >
               Support the mission
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

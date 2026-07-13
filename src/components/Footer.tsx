@@ -39,12 +39,12 @@ function TikTokIcon() {
 // path sa sarili nating site (hindi papalabas sa Facebook) — kaya parang
 // "walang nangyayari" kapag na-click, dahil nagre-reload lang siya sa
 // parehong page (walang router ang site na ito).
-const PARTNERSHIP_URL = "https://web.facebook.com/Propertyz09";
+const PARTNERSHIP_URL = "https://web.facebook.com/WhereToGoFreedivingHub";
 
 // EDIT THIS: palitan ng totoong email address ng organization.
 // Ginagamit din ito sa ContactForm.tsx (FinalCTA) — dapat parehong
 // value ang ilagay doon.
-const CONTACT_EMAIL = "hello@sorsogonbluewaves.org";
+const CONTACT_EMAIL = "support@thevalibrary.com";
 
 const socials = [
   { label: "Facebook", href: "https://facebook.com/SorsogonBlueWaves", Icon: FacebookIcon },
@@ -83,7 +83,7 @@ export default function Footer() {
             className="inline-block font-mono text-[11px] uppercase tracking-wide text-deep-950 px-4 py-2 rounded-full whitespace-nowrap"
             style={{ backgroundColor: "#FF7A52" }}
           >
-            Become a Partner
+             join our community
           </a>
         </div>
 
@@ -140,14 +140,14 @@ export default function Footer() {
               href={PARTNERSHIP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block font-mono text-[12.5px] uppercase tracking-wide text-deep-950 bg-brand px-5 py-2.5 rounded-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/40 transition-all"
+              className="inline-block font-mono text-[12.5px] uppercase tracking-wide text-deep-950 bg-[#FF7A52] px-5 py-2.5 rounded-full hover:-translate-y-0.5 hover:shadow-lg transition-all"
             >
-              Where To Go?
+               Join our community
             </a>
           </div>
         </div>
 
-        <div className="pt-5 font-mono text-[12px] text-brand-700 text-center sm:text-left">
+        <div className="pt-5 font-mono text-[12px] text-brand-700 text-center sm:text-center">
           &copy; 2026 Sorsogon Blue Waves Aquatics Club. From pool to ocean.
         </div>
       </div>

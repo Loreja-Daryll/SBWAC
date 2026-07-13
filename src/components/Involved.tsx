@@ -76,7 +76,7 @@ export default function Involved() {
           Join the Mission
         </div>
         <h2 className="font-display font-semibold text-[28px] sm:text-[36px] lg:text-[42px]">
-          There is a way in, whoever you are.
+          There is a way in, <span style={{ color: "#FF7A52" }}>whoever</span> you are.
         </h2>
         <p className="mt-4 max-w-[560px] text-brand-100">
           Message the club on Facebook and we will point you to the right

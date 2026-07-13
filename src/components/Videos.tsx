@@ -29,56 +29,122 @@ const THUMBNAIL_SRC = `${import.meta.env.BASE_URL}videos/pic.png`;
 const VIDEOS: VideoItem[] = [
   {
     id: "v1",
-    title: "Training Day Highlights",
+    title: "Take a peak of the underwater world",
     facebookUrl: "https://web.facebook.com/reel/1543159040479719",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v2",
-    title: "Meet the Coaches",
-    facebookUrl: "https://web.facebook.com/reel/2192208284861537",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1801409660840733",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v3",
-    title: "First Open Water Swim",
+    title: "Take a peak of the underwater world",
     facebookUrl: "https://web.facebook.com/reel/1034013555830579",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v4",
-    title: "Community Clean-up Day",
-    facebookUrl: "https://web.facebook.com/reel/3297716713734404",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/2421575181606696",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v5",
-    title: "A Message From Our Swimmers",
+    title: "Take a peak of the underwater world",
     facebookUrl: "https://web.facebook.com/reel/1011772761377138",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v6",
-    title: "Fun Swim Saturday",
+    title: "Take a peak of the underwater world",
     facebookUrl: "https://web.facebook.com/reel/1684639269440002",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v7",
-    title: "Coastal Clean Dive",
+    title: "Take a peak of the underwater world",
     facebookUrl: "https://web.facebook.com/reel/1673778157264807",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v8",
-    title: "Coastal Clean Dive",
+    title: "Take a peak of the underwater world",
     facebookUrl: "https://web.facebook.com/reel/1532134888553376",
     thumbnail: THUMBNAIL_SRC,
   },
   {
     id: "v9",
-    title: "Coastal Clean Dive",
+    title: "Take a peak of the underwater world",
     facebookUrl: "https://web.facebook.com/reel/2166959150813290",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v10",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1321089743452979",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v11",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1012375385302574",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v12",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1974412946772806",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v13",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/759195307131149",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v14",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/725932236581372",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v15",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1387618376062748",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v16",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1392758218862394",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v17",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1922187514990929",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v18",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1808613536731602",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v19",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1623606348331878",
+    thumbnail: THUMBNAIL_SRC,
+  },
+  {
+    id: "v20",
+    title: "Take a peak of the underwater world",
+    facebookUrl: "https://web.facebook.com/reel/1182162397266823",
     thumbnail: THUMBNAIL_SRC,
   },
 ];
@@ -274,7 +340,7 @@ export default function Videos() {
             In the Water
           </div>
           <h2 className="font-display font-semibold text-[28px] sm:text-[36px] lg:text-[42px]">
-            See the mission in motion.
+            See the <span style={{ color: "#FF7A52" }}>mission</span> in motion.
           </h2>
         </div>
 

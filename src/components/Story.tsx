@@ -14,7 +14,7 @@ export default function Story() {
             Why This Exists
           </div>
           <h2 className="font-display font-semibold text-[28px] sm:text-[36px] lg:text-[42px] text-foam leading-tight">
-            A Promise to Sorsogon.
+            A <span style={{ color: "#FF7A52" }}>Promise</span> to Sorsogon.
           </h2>
           <p className="mt-6 text-[16px] leading-relaxed text-brand-100 font-medium max-w-[440px]">
             Blue Waves is being built as a mission-first club, rooted in
@@ -37,7 +37,10 @@ export default function Story() {
                 boxShadow: "0 10px 30px rgba(2, 13, 22, 0.4)",
               }}
             >
-              <div className="w-11 h-11 rounded-full bg-brand-500 text-deep-950 flex items-center justify-center font-display font-semibold text-[17px] flex-shrink-0">
+              <div
+                className="w-11 h-11 rounded-full text-deep-950 flex items-center justify-center font-display font-semibold text-[17px] flex-shrink-0"
+                style={{ backgroundColor: "#FF7A52" }}
+              >
                 {p.initial}
               </div>
               <div>

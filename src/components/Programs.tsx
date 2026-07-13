@@ -87,7 +87,7 @@ export default function Programs() {
           How Dreamers Train
         </div>
         <h2 className="font-display font-semibold text-[28px] sm:text-[36px] lg:text-[42px] text-foam">
-          Two paths in the water. One mission.
+          Two <span style={{ color: "#FF7A52" }}>paths</span> in the water. One <span style={{ color: "#FF7A52" }}>mission</span>.
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">

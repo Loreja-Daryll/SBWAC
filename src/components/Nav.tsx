@@ -29,15 +29,8 @@ function CloseIcon() {
 }
 
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // close the drawer automatically if the viewport grows back to desktop
   useEffect(() => {
@@ -69,16 +62,12 @@ export default function Nav() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-        scrolled ? "bg-deep-950/95 backdrop-blur-md py-3 shadow-lg" : "bg-transparent py-5"
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 bg-deep-950/95 backdrop-blur-md py-3 shadow-lg">
       <div className="max-w-[1160px] mx-auto px-7 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Sorsogon Blue Waves Aquatics Club" className="w-9 h-9 object-contain" />
+          <img src={logo} alt="Sorsogon Blue Waves" className="w-9 h-9 object-contain" />
           <span className="font-display font-semibold text-[15px] text-foam">
-            Blue Waves <span className="font-mono font-normal text-[12px] text-brand-300 uppercase tracking-wide">Aquatics Mission</span>
+            Blue Waves <span className="font-mono font-normal text-[12px] text-brand-300 uppercase tracking-wide">   </span>
           </span>
         </div>
 
@@ -87,14 +76,7 @@ export default function Nav() {
             guarantees maximum separation from the logo — this whole
             group sits flush at the right edge */}
         <div className="flex items-center gap-8">
-          <nav
-            className="hidden md:flex gap-8 transition-all duration-300"
-            style={{
-              color: scrolled ? undefined : "#031E31",
-              fontSize: scrolled ? "14px" : "16px",
-              fontWeight: scrolled ? 400 : 700,
-            }}
-          >
+          <nav className="hidden md:flex gap-8 text-[14px] text-brand-100">
             {LINKS.map((l) => {
               const isActive = l.id === activeId;
               return (
@@ -102,8 +84,8 @@ export default function Nav() {
                   key={l.href}
                   href={l.href}
                   onClick={() => setActiveId(l.id)}
-                  className={`relative pb-1 transition-colors hover:text-brand-300 ${scrolled ? "text-brand-100" : ""}`}
-                  style={{ color: isActive ? (scrolled ? "#F7FBFD" : "#031E31") : undefined }}
+                  className="relative pb-1 transition-colors hover:text-brand-300"
+                  style={{ color: isActive ? "#F7FBFD" : undefined }}
                 >
                   {l.label}
                   <span
@@ -160,7 +142,7 @@ export default function Nav() {
       <div
         className="md:hidden fixed top-0 right-0 z-[99] overflow-hidden pointer-events-none"
         style={{
-          paddingTop: scrolled ? "58px" : "76px",
+          paddingTop: "58px",
           width: menuOpen ? "min(260px, 78vw)" : "0px",
           transition: "width 0.32s cubic-bezier(.22,.68,.36,1)",
         }}
