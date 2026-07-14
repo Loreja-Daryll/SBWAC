@@ -64,12 +64,12 @@ export default function Nav() {
   return (
     <header className="fixed top-0 left-0 right-0 z-[100] transition-all duration-300 bg-deep-950/95 backdrop-blur-md py-3 shadow-lg">
       <div className="max-w-[1160px] mx-auto px-7 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Sorsogon Blue Waves" className="w-9 h-9 object-contain" />
+        <a href="#hero" onClick={() => setActiveId(null)} className="flex items-center gap-3">
+          <img src={logo} alt="Sorsogon Blue Waves Aquatics Club" className="w-9 h-9 object-contain" />
           <span className="font-display font-semibold text-[15px] text-foam">
-            Blue Waves <span className="font-mono font-normal text-[12px] text-brand-300 uppercase tracking-wide">   </span>
+            Blue Waves <span className="font-mono font-normal text-[12px] text-brand-300 uppercase tracking-wide">  </span>
           </span>
-        </div>
+        </a>
 
         {/* everything else (nav links + button + mobile toggle) is
             grouped together here, so justify-between on the parent

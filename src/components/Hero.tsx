@@ -260,9 +260,9 @@ export default function Hero() {
           <h1 className="font-display text-[42px] font-semibold leading-[0.98] tracking-[-0.02em] sm:text-[64px] lg:text-[78px]">
             Raising
             <br />
-            swimmers.
+            <span style={{ color: "#FF7A52" }}>swimmers.</span>
             <br />
-            <span style={{ color: "#FF7A52" }}> Protecting </span> <span>the</span> <span style={{ color: "#FF7A52" }}> sea</span>
+            <span> Protecting the</span> <span style={{ color: "#FF7A52" }}> sea</span>
           </h1>
           <p className="mt-7 max-w-[480px] text-[18px] text-brand-100">
             A community-led aquatics mission giving young
