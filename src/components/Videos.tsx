@@ -42,7 +42,7 @@ const VIDEOS: VideoItem[] = [
   {
     id: "v3",
     title: "Take a peak of the underwater world",
-    facebookUrl: "https://web.facebook.com/reel/1034013555830579",
+    facebookUrl: "https://web.facebook.com/reel/1512825636646954",
     thumbnail: THUMBNAIL_SRC,
   },
   {
