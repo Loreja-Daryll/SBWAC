@@ -75,7 +75,7 @@ export default function Nav() {
             grouped together here, so justify-between on the parent
             guarantees maximum separation from the logo — this whole
             group sits flush at the right edge */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-20">
           <nav className="hidden md:flex gap-8 text-[14px] text-brand-100">
             {LINKS.map((l) => {
               const isActive = l.id === activeId;

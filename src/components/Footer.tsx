@@ -39,7 +39,7 @@ function TikTokIcon() {
 // path sa sarili nating site (hindi papalabas sa Facebook) — kaya parang
 // "walang nangyayari" kapag na-click, dahil nagre-reload lang siya sa
 // parehong page (walang router ang site na ito).
-const PARTNERSHIP_URL = "https://web.facebook.com/WhereToGoFreedivingHub";
+const PARTNERSHIP_URL = "https://www.facebook.com/lawod.freediving";
 
 // EDIT THIS: palitan ng totoong email address ng organization.
 // Ginagamit din ito sa ContactForm.tsx (FinalCTA) — dapat parehong

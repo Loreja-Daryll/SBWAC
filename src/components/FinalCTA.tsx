@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, ValidationError } from "@formspree/react";
 
 // Real Formspree form ID — configure the destination email address in
@@ -99,11 +99,67 @@ function ContactForm({ onClose }: { onClose: () => void }) {
   );
 }
 
+// TO ADD YOUR JELLYFISH FRAMES:
+// Drop THREE PNG files into `public/images/`, named exactly
+// "jellyfish-1.png", "jellyfish-2.png", and "jellyfish-3.png" (all
+// transparent background, same size/framing — e.g. bell contracted,
+// halfway, fully expanded). No code changes needed. This cycles
+// through the three on a timer with a smooth crossfade between each,
+// creating a simple "flipbook" pulsing animation instead of relying on
+// an actual video. If a frame's file is missing, it's just skipped in
+// the cycle (no broken image icon) — with all three missing, nothing
+// shows at all.
+const JELLYFISH_FRAMES = ["jellyfish-1.png", "jellyfish-2.png", "jellyfish-3.png"];
+const JELLYFISH_FRAME_MS = 1000; // how long each frame holds before crossfading to the next
+
+function JellyfishImage() {
+  const [frame, setFrame] = useState(0);
+  const [failed, setFailed] = useState<boolean[]>(() => JELLYFISH_FRAMES.map(() => false));
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setFrame((f) => (f + 1) % JELLYFISH_FRAMES.length);
+    }, JELLYFISH_FRAME_MS);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const markFailed = (i: number) => {
+    setFailed((prev) => {
+      const next = [...prev];
+      next[i] = true;
+      return next;
+    });
+  };
+
+  if (failed.every(Boolean)) return null;
+
+  return (
+    <div
+      className="hidden lg:block absolute right-[10%] top-1/2 -translate-y-1/2 w-[200px] xl:w-[220px] aspect-[3/4] pointer-events-none"
+      aria-hidden="true"
+    >
+      {JELLYFISH_FRAMES.map((filename, i) =>
+        !failed[i] ? (
+          <img
+            key={filename}
+            src={`${import.meta.env.BASE_URL}images/${filename}`}
+            alt=""
+            onError={() => markFailed(i)}
+            className="absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ease-in-out"
+            style={{ opacity: frame === i ? 0.2 : 0 }}
+          />
+        ) : null
+      )}
+    </div>
+  );
+}
+
 export default function FinalCTA() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <section id="final" className="py-32 text-center text-foam relative">
+    <section id="final" className="py-32 text-center text-foam relative overflow-hidden">
+      <JellyfishImage />
       <div className="max-w-[680px] mx-auto px-7">
         <div className="font-mono text-[12.5px] tracking-widest uppercase text-brand-300 mb-6 flex items-center justify-center gap-2.5">
           <span className="w-5 h-px bg-brand inline-block" />

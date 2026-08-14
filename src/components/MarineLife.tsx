@@ -40,7 +40,7 @@ export function Turtle({
         left,
         width: 220 * size,
         height: "auto",
-        opacity,
+        opacity: 0.30,
         objectFit: "contain",
         transform: facing === "left" ? "scaleX(-1)" : "none",
       }}
