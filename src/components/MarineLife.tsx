@@ -40,7 +40,7 @@ export function Turtle({
         left,
         width: 220 * size,
         height: "auto",
-        opacity: 0.30,
+        opacity,
         objectFit: "contain",
         transform: facing === "left" ? "scaleX(-1)" : "none",
       }}
@@ -245,7 +245,7 @@ export function ShallowsLife() {
 export function ReefLife() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      <Turtle top="83%" left="20%" size={1.5} opacity={0.1} />
+      <Turtle top="34%" left="40%" size={1.5} opacity={0.1} />
       <HeroFish top="14%" left="55%" size={1.1} variant="angel" duration={34} facing="left" />
       <FishSchool top="10%" duration={26} size={0.8} opacity={0.4} color="#0099D9" />
       <FishSchool top="85%" duration={34} reverse size={0.6} opacity={0.3} color="#046B98" />
